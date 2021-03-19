@@ -5,9 +5,10 @@ from matplotlib import pyplot as plt
 
 from pendulopodes.dynamics import system_single_simple_pendulum, polar_to_inertial
 from pendulopodes.diffeq import ode45_single_pendulum
+from pendulopodes.animation import animate
 
 
-T_SPAN = [0, 1]
+T_SPAN = [0, 30]
 
 
 def vector(s):
@@ -57,6 +58,20 @@ def plot(theta):
     plt.show()
 
 
+def sample(t, theta):
+    path = []
+
+    desired_time = 0
+    step = 0.050
+
+    for i, time in enumerate(t):
+        if time >= desired_time:
+            path.append(theta[i])
+            desired_time += step
+
+    return path
+
+
 def main():
     args = parse()
 
@@ -70,7 +85,10 @@ def main():
         theta_dot0
     )
 
-    plot(theta)
+    path = sample(t, theta)
+
+    # plot(theta)
+    animate(theta)
 
 
 if __name__ == '__main__':
