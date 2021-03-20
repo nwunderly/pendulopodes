@@ -3,8 +3,8 @@ import argparse
 import numpy as np
 from matplotlib import pyplot as plt
 
-from pendulopodes.dynamics import system_single_simple_pendulum, polar_to_inertial
-from pendulopodes.diffeq import ode45_single_pendulum
+from pendulopodes.dynamics import polar_to_inertial
+from pendulopodes.diffeq import ode45_single_pendulum, ode45_double_pendulum
 from pendulopodes.animation import animate
 
 
@@ -19,9 +19,9 @@ def vector(s):
 def parse():
     parser = argparse.ArgumentParser()
 
-    # theta and theta_dot
+    # theta and omega
     parser.add_argument('--theta0', type=float, default=np.pi/2)
-    parser.add_argument('--thetadot0', type=float, default=0)
+    parser.add_argument('--omega0', type=float, default=0)
 
     return parser.parse_args()
 
@@ -76,19 +76,34 @@ def main():
     args = parse()
 
     theta0 = args.theta0
-    theta_dot0 = args.thetadot0
+    omega0 = args.omega0
 
-    t, theta, theta_dot = ode45_single_pendulum(
-        system_single_simple_pendulum,
+    ###################
+    # SINGLE PENDULUM #
+    ###################
+    # t, theta, omega = ode45_single_pendulum(
+    #     T_SPAN,
+    #     theta0,
+    #     omega0
+    # )
+    #
+    # path = sample(t, theta)
+    # # plot(theta)
+    # animate(path)
+
+    ###################
+    # DOUBLE PENDULUM #
+    ###################
+    t, theta1, omega1, theta2, omega2 = ode45_double_pendulum(
         T_SPAN,
-        theta0,
-        theta_dot0
+        theta0, theta0,
+        omega0, omega0,
     )
 
-    path = sample(t, theta)
+    path1 = sample(t, theta1)
+    path2 = sample(t, theta2)
 
-    # plot(theta)
-    animate(theta)
+    animate(path1, path2)
 
 
 if __name__ == '__main__':
