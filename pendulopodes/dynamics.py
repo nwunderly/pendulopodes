@@ -12,7 +12,6 @@ Assumptions:
     theta = 0 at (x, y) = (1, 0)
 
 Coordinate system:
-    (shoutout to Derek Paley)
 
             |
             |
@@ -25,7 +24,7 @@ Coordinate system:
             V
             X
 
-Angular kinematics:
+Angular kinematics: (RADIANS)
     theta: angle
     omega: angular velocity
     alpha: angular acceleration
@@ -35,19 +34,18 @@ Angular kinematics:
 def inertial_to_polar(x, y):
     r = np.sqrt(x**2 + y**2)
     theta = np.arctan(y/x)
-
     return r, theta
 
 
 def polar_to_inertial(r, theta):
     x = r * np.cos(theta)
     y = r * np.sin(theta)
-
     return x, y
 
 
 def eqm_single_simple_pendulum(theta, omega):
-    """Single-part simple pendulum equation of motion.
+    """Single-element simple pendulum equation of motion.
+    (Shoutout to Derek Paley)
 
     tension = m*g*cos(theta)+m*l*theta
     alpha = -g/l*sin(theta
@@ -58,7 +56,7 @@ def eqm_single_simple_pendulum(theta, omega):
 
 
 def system_single_simple_pendulum(t, y):
-    """Single-part simple pendulum system of differential equations, in vector form.
+    """System of differential equations for a single-element simple pendulum.
 
     y = [theta, omega]
     y_dot = [omega, alpha]
@@ -72,7 +70,10 @@ def system_single_simple_pendulum(t, y):
 
 
 def eqm_double_simple_pendulum(theta1, omega1, theta2, omega2):
-    """Double-part simple pendulum equation of motion"""
+    """Two-element simple pendulum equation of motion.
+
+    Equations found at https://www.myphysicslab.com/pendulum/double-pendulum-en.html
+    """
 
     alpha1_n = -g*(2*m1 + m2)*np.sin(theta1) - m2*g*np.sin(theta1 - 2*theta2) - 2*np.sin(theta1 - theta2)*m2*(omega2**2 * l2 + omega1**2 * l1 * np.cos(theta1 - theta2))
     alpha1_d = l1 * (2*m1 + m2 - m2*np.cos(2*theta1 - 2*theta2))
@@ -86,6 +87,11 @@ def eqm_double_simple_pendulum(theta1, omega1, theta2, omega2):
 
 
 def system_double_simple_pendlum(t, y):
+    """System of differential equations for a two-element simple pendulum.
+
+    y = [theta1, omega1, theta2, omega2]
+    y_dot = [omega1, alpha1, omega2, alpha2]
+    """
     theta1, omega1, theta2, omega2 = y
 
     omega1, alpha1, omega2, alpha2 = eqm_double_simple_pendulum(theta1, omega1, theta2, omega2)

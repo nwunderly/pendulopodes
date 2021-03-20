@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from pendulopodes.dynamics import polar_to_inertial
-from pendulopodes.diffeq import ode45_single_pendulum, ode45_double_pendulum
+from pendulopodes.diffeq import solve_single_pendulum, solve_double_pendulum
 from pendulopodes.animation import animate
 
 
@@ -54,7 +54,6 @@ def plot(theta):
     for i in range(n_points):
         ax.plot(y[i], -x[i], color=grad[i], marker='+')
 
-
     plt.show()
 
 
@@ -81,7 +80,7 @@ def main():
     ###################
     # SINGLE PENDULUM #
     ###################
-    # t, theta, omega = ode45_single_pendulum(
+    # t, theta, omega = solve_single_pendulum(
     #     T_SPAN,
     #     theta0,
     #     omega0
@@ -94,7 +93,7 @@ def main():
     ###################
     # DOUBLE PENDULUM #
     ###################
-    t, theta1, omega1, theta2, omega2 = ode45_double_pendulum(
+    t, theta1, omega1, theta2, omega2 = solve_double_pendulum(
         T_SPAN,
         theta0, theta0,
         omega0, omega0,
