@@ -1,3 +1,5 @@
+from collections import deque
+
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
@@ -23,6 +25,8 @@ def animate(*theta_arrays):
     x_arrays = []
     y_arrays = []
     lines = []
+    trail = []
+    endpoints = deque(maxlen=10)
 
     for theta_array in theta_arrays:
         lines += ax.plot([], [], lw=1)
@@ -44,8 +48,18 @@ def animate(*theta_arrays):
             x = [last[1], last[1] + -x_arrays[elem][frame]]
             lines[elem].set_data(y, x)
             last = y[1], x[1]
-
-        return lines
+            
+            # last element = endpoint
+            if elem == element_count - 1:
+                endpoints.append(last)
+                
+                trail = []
+                for p in range(len(endpoints) - 1):
+                    line, = ax.plot([], [], "r", lw=1)
+                    line.set_data([endpoints[p][0], endpoints[p+1][0]], [endpoints[p][1], endpoints[p+1][1]])
+                    trail.append(line)
+                    
+        return lines + trail
 
     anim = FuncAnimation(fig, func, init_func=init, frames=frame_count, interval=50, blit=True)
 
