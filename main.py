@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from pendulopodes.dynamics import polar_to_inertial
-from pendulopodes.diffeq import solve_single_pendulum, solve_double_pendulum
+from pendulopodes.diffeq import solve_single_pendulum_v2, solve_double_pendulum_v2
 from pendulopodes.animation import animate
 
 
@@ -20,8 +20,15 @@ def parse():
     parser = argparse.ArgumentParser()
 
     # theta and omega
-    parser.add_argument('--theta0', type=float, default=np.pi/2)
-    parser.add_argument('--omega0', type=float, default=0)
+    parser.add_argument('--theta10', type=float, default=np.pi/2)
+    parser.add_argument('--omega10', type=float, default=0)
+    parser.add_argument('--theta20', type=float, default=np.pi/2)
+    parser.add_argument('--omega20', type=float, default=0)
+
+    parser.add_argument('--l1', type=float, default=1)
+    parser.add_argument('--l2', type=float, default=1)
+    parser.add_argument('--m1', type=float, default=1)
+    parser.add_argument('--m2', type=float, default=1)
 
     return parser.parse_args()
 
@@ -74,8 +81,14 @@ def sample(t, theta):
 def main():
     args = parse()
 
-    theta0 = args.theta0
-    omega0 = args.omega0
+    theta10 = args.theta10
+    omega10 = args.omega10
+    l1 = args.l1
+    m1 = args.m1
+    theta20 = args.theta20
+    omega20 = args.omega20
+    l2 = args.l2
+    m2 = args.m2
 
     ###################
     # SINGLE PENDULUM #
@@ -93,14 +106,42 @@ def main():
     ###################
     # DOUBLE PENDULUM #
     ###################
-    t, theta1, omega1, theta2, omega2 = solve_double_pendulum(
+    # t, theta1, omega1, theta2, omega2 = solve_double_pendulum(
+    #     T_SPAN,
+    #     theta10, omega10,  # l1, m1,
+    #     theta20, omega20,  # l2, m2,
+    # )
+    #
+    # path1 = sample(t, theta1)
+    # path2 = sample(t, theta2)
+    #
+    # animate(path1, path2)
+
+    ########################################
+    # SINGLE PENDULUM CLASS IMPLEMENTATION #
+    ########################################
+    t, theta, omega = solve_single_pendulum_v2(
         T_SPAN,
-        theta0, theta0,
-        omega0, omega0,
+        l1, m1,
+        theta10,
+        omega10
     )
 
-    path1 = sample(t, theta1)
-    path2 = sample(t, theta2)
+    path = sample(t, theta)
+    # plot(theta)
+    animate((l1, path))
+
+    ########################################
+    # DOUBLE PENDULUM CLASS IMPLEMENTATION #
+    ########################################
+    t, theta1, omega1, theta2, omega2 = solve_double_pendulum_v2(
+        T_SPAN,
+        l1, m1, theta10, omega10,
+        l2, m2, theta20, omega20,
+    )
+
+    path1 = (l1, sample(t, theta1))
+    path2 = (l2, sample(t, theta2))
 
     animate(path1, path2)
 

@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation
 from .dynamics import polar_to_inertial
 
 
-def animate(*theta_arrays):
+def animate(*pendulums):
     """Plot an arbitrary number of pendulum elements over time.
 
     Each theta_array should be an array of angles (in radians) of a particular element over time.
@@ -14,24 +14,28 @@ def animate(*theta_arrays):
 
     Returns the FunctionAnimation.
     """
+    total_len = 0
+    for pendulum in pendulums:
+        total_len += pendulum[0]
+
     fig = plt.figure()
-    ax = plt.axes(xlim=(-2, 2), ylim=(-2, 2))
+    ax = plt.axes(xlim=(-total_len, total_len), ylim=(-total_len, total_len))
 
     ax.set_aspect('equal', adjustable='box')
 
-    element_count = len(theta_arrays)
-    frame_count = len(theta_arrays[0])
+    element_count = len(pendulums)
+    frame_count = len(pendulums[0][1])
 
     x_arrays = []
     y_arrays = []
     lines = []
-    trail = []
     endpoints = deque(maxlen=10)
 
-    for theta_array in theta_arrays:
+    for pendulum in pendulums:
+        l, theta_array = pendulum
         lines += ax.plot([], [], lw=1)
 
-        _x, _y = polar_to_inertial(1, theta_array)
+        _x, _y = polar_to_inertial(l, theta_array)
         x_arrays.append(_x)
         y_arrays.append(_y)
 
@@ -42,6 +46,7 @@ def animate(*theta_arrays):
 
     def func(frame):  # function called to render each frame
         last = 0, 0
+        trail = []
 
         for elem in range(element_count):
             y = [last[0], last[0] + y_arrays[elem][frame]]
